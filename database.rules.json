@@ -1,0 +1,53 @@
+{
+  "rules": {
+    "teachers": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        ".write": "$uid === auth.uid"
+      }
+    },
+      
+    "students": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        ".write": "$uid === auth.uid",
+        "class": {
+            ".validate": "root.child('classes/' + newData.val()).exists()"
+        }
+      }
+    },
+      
+    "classes": {
+      ".read": "true",
+      "$class": {
+        ".write": "(!data.exists() && root.child('teachers/' + auth.uid).exists()) || data.child('teacher').val() === auth.uid"
+      }
+    },
+
+    "class_member": {
+      "$class": {
+        ".read": "root.child('teachers/' + auth.uid).exists()",
+        ".write": "root.child('students/' + auth.uid).exists()",
+        "$student": {
+          ".validate": "root.child('students/' + $student + '/class').val() === $class"
+        }
+      }
+    },
+
+    "launches": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["author", "timestamp", "favorite"]
+    },
+      
+    "class_launch": {
+      "$class": {
+        ".read": "root.child('teachers/' + auth.uid + '/class').val() === $class",
+        ".write": "root.child('students/' + auth.uid + '/class').val() === $class",
+        "$launch": {
+          ".validate": "root.child('launches/' + $launch + '/author').val() === auth.uid"
+        }
+      }
+    }
+  }
+}
