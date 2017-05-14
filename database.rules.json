@@ -48,6 +48,16 @@
           ".validate": "root.child('launches/' + $launch + '/author').val() === auth.uid"
         }
       }
+    },
+
+    "user_favorites": {
+      "$user": {
+        ".read": "$user === auth.uid",
+        ".write": "$user === auth.uid",
+        "$launch": {
+          ".validate": "root.child('launches/' + $launch).exists()"
+        }
+      }
     }
   }
 }
